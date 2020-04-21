@@ -44,3 +44,32 @@ class canvas(object):
 
         del self.draw   # Tidy up the resources
         return False    # Never suppress exceptions
+
+    def create(self):
+        #return self.__enter__()
+        print('create', self)
+        self.draw = ImageDraw.Draw(self.image)
+        return self.draw
+
+    def flush(self):
+        self.device.display(self.image)
+
+
+    def cleanup_without_display(self):
+        # do the drawing onto the device
+        self.device.display(self.image)
+        del self.draw   # Tidy up the resources
+        return False    # Never suppress exceptions 
+
+    def cleanup(self, type, value, traceback):
+        #return self.__exit__(None, None, None)
+        if type is None:
+
+            if self.dither:
+                self.image = self.image.convert(self.device.mode)
+
+            # do the drawing onto the device
+            self.device.display(self.image)
+
+        del self.draw   # Tidy up the resources
+        return False    # Never suppress exceptions
